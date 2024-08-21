@@ -27,6 +27,32 @@ int* bubble_sort(int arr[],int size)
     }
     return arr2;
 }
+void fcfs(int arrival_time[],int burst_time[],int size,int gantt_chart[],int completion_time_in_ganttChart[])
+{
+    int* arrival_time2=bubble_sort(arrival_time,size);
+    int start=arrival_time2[0];
+    int index=0;
+    int done[size];//checks process is completed or not
+    //initializing every process to 0 indicating not attended
+    for(int i=0;i<size;i++)
+    {
+        done[i]=0;
+    }
+    for(int i=0;i<size;i++)
+    {
+        for(int j=0;j<size;j++)
+        {
+            if((arrival_time[j] == arrival_time2[i]) && (done[j]==0))
+            {
+                gantt_chart[index++]=j;
+                completion_time_in_ganttChart[j] = start+burst_time[j];
+                start=completion_time_in_ganttChart[j];
+                done[j] = 1;
+            }
+        }
+    }
+    free(arrival_time2);
+}
 
 int main()
 {
