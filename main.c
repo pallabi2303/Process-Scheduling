@@ -53,6 +53,69 @@ void fcfs(int arrival_time[],int burst_time[],int size,int gantt_chart[],int com
     }
     free(arrival_time2);
 }
+void rr(int arrival_time[],int burst_time[],int size,int time_quantum,int gantt_chart[],int completion_time_in_ganttChart[])
+{
+    int* arrival_time2=bubble_sort(arrival_time,size);
+    int start=arrival_time2[0];
+    free(arrival_time2);
+    int *burst_time2=(int *)malloc(size*sizeof(int));
+    for (int i=0;i<size;i++)
+    {
+        burst_time2[i]=burst_time[i];
+    }
+    int index_ready=0;
+    int index_gantt=0;
+    int index_comp=0;
+    int done[size];
+    for(int i=0;i<size;i++)
+    {
+        done[i]=0;
+    }
+    int* ready=(int *)malloc(size*10*sizeof(int));
+    for(int i=0;i<size;i++)
+    {
+        if(arrival_time[i]==start)
+        {
+            ready[index_ready]=i;
+            index_ready++;
+            done[i]=1;
+        }
+    }
+    int y=0;
+    for(int i=0;i<size;i++)
+    {
+        y+=burst_time[i];
+    }
+    int x=0;
+    while (ready[x]<size && ready[x]>=0 && x<size*10)
+    {
+        gantt_chart[index_gantt]=ready[x];
+        completion_time_in_ganttChart[index_gantt]= start+(((burst_time[ready[x]]-time_quantum)>=0 )? time_quantum : burst_time[ready[x]]);
+        burst_time[ready[x]] -= time_quantum;
+        start=completion_time_in_ganttChart[index_gantt];
+        for(int i=0;i<size;i++)
+        {
+            if(arrival_time[i]<=start && done[i]==0)
+            {
+                ready[index_ready++]=i;
+                done[i]=1;
+            }
+        }
+        if(burst_time[ready[x]]>0)
+        {
+            ready[index_ready++]=ready[x];
+        }
+        index_gantt++;
+        x++;
+        if(start>=y)
+           break;
+    }
+    for (int i=0;i<size;i++)
+    {
+        burst_time[i]=burst_time2[i];
+    }
+    free(burst_time2);
+}
 
 int main()
 {
